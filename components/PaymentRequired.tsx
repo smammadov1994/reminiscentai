@@ -14,63 +14,49 @@ export const PaymentRequired: React.FC<PaymentRequiredProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[600px] space-y-8 p-8">
-      <div className="text-center space-y-6 max-w-md">
-        <div className="w-20 h-20 bg-zinc-700 rounded-full flex items-center justify-center mx-auto">
-          <svg
-            className="w-10 h-10 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+      <div className="text-center space-y-8 max-w-lg">
+        <div className="w-24 h-24 bg-green-400 border-6 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center mx-auto transform rotate-3">
+          <span className="text-5xl">🎉</span>
         </div>
 
-        <div className="space-y-3">
-          <h2 className="text-3xl font-bold text-white">
-            Generation Complete!
+        <div className="space-y-4">
+          <h2 className="text-4xl font-black text-black transform -rotate-1">
+            <span className="bg-yellow-400 px-4 py-2 border-6 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] inline-block">
+              GENERATION COMPLETE!
+            </span>
           </h2>
-          <p className="text-xl text-gray-300">
-            Your {generatedImagesCount} logo transformation
-            {generatedImagesCount > 1 ? "s are" : " is"} ready
+          <p className="text-xl font-bold text-black bg-pink-400 p-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+            Your {generatedImagesCount} amazing logo transformation
+            {generatedImagesCount > 1 ? "s are" : " is"} ready! 🚀
           </p>
         </div>
 
-        <div className="bg-zinc-800 rounded-xl p-6 space-y-4">
-          <div className="text-center space-y-2">
-            <p className="text-gray-300">
-              Complete your payment to view and download your generated images
+        <div className="bg-blue-400 border-6 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 space-y-4 transform -rotate-1">
+          <div className="text-center space-y-3">
+            <p className="text-black font-bold text-lg">
+              💳 Complete your payment to unlock your creations!
             </p>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-4xl font-black text-black bg-white px-4 py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-block transform rotate-2">
               ${(totalAmount / 100).toFixed(2)}
             </div>
-            <p className="text-sm text-gray-400">
-              ${(GENERATION_PRICE / 100).toFixed(2)} per generation
+            <p className="text-black font-bold">
+              Only ${(GENERATION_PRICE / 100).toFixed(2)} per generation! 💰
             </p>
           </div>
         </div>
 
         <button
           onClick={onPayNow}
-          className="w-full bg-white text-black py-4 px-8 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all transform hover:scale-105"
+          className="w-full bg-green-400 text-black py-6 px-8 border-6 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all transform rotate-1 hover:rotate-0 font-black text-2xl"
         >
-          Pay Now & View Results
+          🚀 PAY NOW & VIEW RESULTS!
         </button>
 
-        <div className="flex items-center justify-center space-x-2 text-gray-400">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span className="text-sm">Secure payment with Stripe</span>
+        <div className="bg-purple-400 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-3 transform rotate-2 inline-block">
+          <div className="flex items-center justify-center space-x-2 text-black font-bold">
+            <span className="text-xl">🔒</span>
+            <span>SECURE PAYMENT WITH STRIPE</span>
+          </div>
         </div>
       </div>
     </div>

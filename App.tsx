@@ -1,18 +1,21 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { UploadStep } from "./components/UploadStep";
 import { DisplayStep } from "./components/DisplayStep";
 import { LandingPage } from "./components/LandingPage";
 import { PaymentRequired } from "./components/PaymentRequired";
 import { PaymentModal } from "./components/PaymentModal";
+import { EmailModal } from "./components/EmailModal";
 import { fileToBase64 } from "./utils/fileUtils";
 import {
   generateSadImage,
   styleModifiers,
   timelineMilestones,
 } from "./services/geminiService";
+import { initEmailService } from "./services/emailService";
 import { HistorySidebar } from "./components/HistorySidebar";
 import { ArtifactPanel } from "./components/ArtifactPanel";
 import { SliderStep } from "./components/SliderStep";
+import { historyDB, HistoryEntry } from "./services/historyService";
 
 export interface OriginalImage {
   base64: string;
@@ -37,6 +40,9 @@ const App: React.FC = () => {
   const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
   const [isPaid, setIsPaid] = useState<boolean>(false);
   const [paymentTimer, setPaymentTimer] = useState<NodeJS.Timeout | null>(null);
+  const [showEmailModal, setShowEmailModal] = useState<boolean>(false);
+  const [selectedImageForEmail, setSelectedImageForEmail] =
+    useState<string>("");
   const [generatedImages, setGeneratedImages] = useState<GeneratedImageState[]>(
     []
   );
@@ -49,6 +55,7 @@ const App: React.FC = () => {
   const [artifactStep, setArtifactStep] = useState<"slider" | "display">(
     "slider"
   );
+  const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState<number>(0);
 
   const generationController = useRef<AbortController | null>(null);
 
@@ -194,10 +201,43 @@ const App: React.FC = () => {
     setShowLanding(true);
   };
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = async () => {
+    console.log("Payment success handler called!");
     setIsPaid(true);
     setPaymentRequired(false);
     setShowPaymentModal(false);
+
+    // Save to IndexedDB when payment is successful
+    if (originalImage && generatedImages.length > 0) {
+      try {
+        console.log("Saving generation to database...", {
+          originalImage: !!originalImage,
+          generatedImagesCount: generatedImages.length,
+          milestoneLabel: timelineMilestones[milestoneIndex].label,
+          milestoneIndex,
+          favoritedIndex,
+        });
+
+        const savedId = await historyDB.saveGeneration({
+          originalImage,
+          generatedImages,
+          milestoneLabel: timelineMilestones[milestoneIndex].label,
+          milestoneIndex,
+          favoritedIndex,
+          isPaid: true,
+        });
+        console.log("Generation saved to history database with ID:", savedId);
+        // Trigger history refresh
+        setHistoryRefreshTrigger((prev) => prev + 1);
+      } catch (error) {
+        console.error("Failed to save generation to history:", error);
+      }
+    } else {
+      console.log("Not saving - missing data:", {
+        hasOriginalImage: !!originalImage,
+        generatedImagesCount: generatedImages.length,
+      });
+    }
   };
 
   const handlePayNow = () => {
@@ -216,6 +256,95 @@ const App: React.FC = () => {
     }
     setPaymentRequired(true);
   };
+
+  const handleEmailSend = (imageUrl: string, index: number) => {
+    console.log("Email button clicked!", { imageUrl, index, isPaid });
+    setSelectedImageForEmail(imageUrl);
+    setShowEmailModal(true);
+  };
+
+  const handleEmailModalClose = () => {
+    setShowEmailModal(false);
+    setSelectedImageForEmail("");
+  };
+
+  const handleHistoryItemClick = (entry: HistoryEntry) => {
+    // Restore the generation from history
+    setOriginalImage(entry.originalImage);
+    setGeneratedImages(entry.generatedImages);
+    setMilestoneIndex(entry.milestoneIndex);
+    setFavoritedIndex(entry.favoritedIndex);
+    setIsPaid(entry.isPaid);
+    setArtifactStep("display");
+    setPaymentRequired(false);
+
+    // Clear any existing timers
+    if (paymentTimer) {
+      clearTimeout(paymentTimer);
+      setPaymentTimer(null);
+    }
+
+    console.log("Restored generation from history:", entry.id);
+  };
+
+  // Update favorite in database when it changes in current session
+  useEffect(() => {
+    const updateFavoriteInDB = async () => {
+      if (isPaid && originalImage && generatedImages.length > 0) {
+        try {
+          // Find the current entry in database and update it
+          const allEntries = await historyDB.getAllHistory();
+          const currentEntry = allEntries.find(
+            (entry) =>
+              entry.originalImage.base64 === originalImage.base64 &&
+              entry.milestoneIndex === milestoneIndex &&
+              entry.isPaid
+          );
+
+          if (currentEntry && currentEntry.favoritedIndex !== favoritedIndex) {
+            await historyDB.updateHistory(currentEntry.id, { favoritedIndex });
+            setHistoryRefreshTrigger((prev) => prev + 1);
+            console.log("Updated favorite in database");
+          }
+        } catch (error) {
+          console.error("Failed to update favorite in database:", error);
+        }
+      }
+    };
+
+    updateFavoriteInDB();
+  }, [favoritedIndex, isPaid, originalImage, milestoneIndex, generatedImages]);
+
+  const handleHistoryDelete = async (entryId: string) => {
+    try {
+      await historyDB.deleteHistory(entryId);
+      setHistoryRefreshTrigger((prev) => prev + 1);
+      console.log("Deleted history entry:", entryId);
+    } catch (error) {
+      console.error("Failed to delete history entry:", error);
+    }
+  };
+
+  const handleHistoryClearAll = async () => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete all history? This cannot be undone."
+      )
+    ) {
+      try {
+        await historyDB.clearAllHistory();
+        setHistoryRefreshTrigger((prev) => prev + 1);
+        console.log("Cleared all history");
+      } catch (error) {
+        console.error("Failed to clear history:", error);
+      }
+    }
+  };
+
+  // Initialize email service on component mount
+  useEffect(() => {
+    initEmailService();
+  }, []);
 
   if (showLanding) {
     return <LandingPage onGetStarted={() => setShowLanding(false)} />;
@@ -246,13 +375,58 @@ const App: React.FC = () => {
         isPinned={isSidebarPinned}
         onPinToggle={() => setIsSidebarPinned((p) => !p)}
         onBackToLanding={handleBackToLanding}
+        onHistoryItemClick={handleHistoryItemClick}
+        onHistoryDelete={handleHistoryDelete}
+        onHistoryClearAll={handleHistoryClearAll}
+        refreshTrigger={historyRefreshTrigger}
       />
-      <main
-        className={`relative z-10 flex-grow flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 transition-all duration-300 ${
-          isSidebarPinned ? "ml-0 lg:ml-72" : "ml-0 lg:ml-16"
-        }`}
-      >
+      <main className="relative z-10 flex-grow flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 ml-72">
         <div className="w-full h-full flex-grow container mx-auto max-w-7xl relative flex items-center justify-center">
+          {/* Temporary test button */}
+          <button
+            onClick={async () => {
+              try {
+                console.log("Testing IndexedDB...");
+                await historyDB.init();
+                console.log("DB initialized");
+
+                const testEntry = {
+                  originalImage: {
+                    base64: "test-base64",
+                    mimeType: "image/png",
+                    url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                  },
+                  generatedImages: ["test1", "test2", "test3"] as (
+                    | string
+                    | null
+                    | "error"
+                  )[],
+                  milestoneLabel: "Test Entry",
+                  milestoneIndex: 0,
+                  favoritedIndex: 1,
+                  isPaid: true,
+                };
+
+                const id = await historyDB.saveGeneration(testEntry);
+                console.log("Test entry saved with ID:", id);
+
+                const history = await historyDB.getAllHistory();
+                console.log("All history:", history);
+
+                setHistoryRefreshTrigger((prev) => prev + 1);
+                alert(
+                  `Test successful! Saved entry with ID: ${id}. Check console for details.`
+                );
+              } catch (error) {
+                console.error("Test failed:", error);
+                alert(`Test failed: ${error}`);
+              }
+            }}
+            className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded font-bold"
+          >
+            TEST DB
+          </button>
+
           <UploadStep
             onImageUpload={handleImageUpload}
             isLoading={!!originalImage}
@@ -284,6 +458,7 @@ const App: React.FC = () => {
                 onFavoriteChange={setFavoritedIndex}
                 onRecreateSingle={(index) => triggerGeneration(index)}
                 onImageClick={!isPaid ? handleImageClick : undefined}
+                onEmailSend={isPaid ? handleEmailSend : undefined}
               />
             )}
           </ArtifactPanel>
@@ -296,6 +471,14 @@ const App: React.FC = () => {
             generatedImagesCount={
               generatedImages.filter((img) => typeof img === "string").length
             }
+          />
+
+          {/* Email Modal */}
+          <EmailModal
+            isOpen={showEmailModal}
+            onClose={handleEmailModalClose}
+            imageUrl={selectedImageForEmail}
+            imageName="Generated Logo"
           />
         </div>
       </main>

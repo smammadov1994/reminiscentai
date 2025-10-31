@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IndexedDB Test</title>
+</head>
+<body>
+    <h1>IndexedDB History Test</h1>
+    <button onclick="testDB()">Test Database</button>
+    <div id="output"></div>
+
+    <script>
+        // Copy the historyService code for testing
+        class HistoryDatabase {
+            constructor() {
+                this.dbName = 'LogoReactivatorDB';
+                this.version = 1;
+                this.storeName = 'history';
+                this.db = null;
+            }
+
+            async init() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(this.dbName, this.version);
+
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => {
+                        this.db = request.result;
+                        resolve();
+                    };
+
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        
+                        if (!db.objectStoreNames.contains(this.storeName)) {
+                            const store = db.createObjectStore(this.storeName, { keyPath: 'id' });
+                            store.createIndex('timestamp', 'timestamp', { unique: false });
+                        }
+                    };
+                });
+            }
+
+            async getAllHistory() {
+                if (!this.db) await this.init();
+
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.createTransaction([this.storeName], 'readonly');
+                    const store = transaction.objectStore(this.storeName);
+                    const index = store.index('timestamp');
+                    const request = index.getAll();
+
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => {
+                        const results = request.result.sort((a, b) => b.timestamp - a.timestamp);
+                        resolve(results);
+                    };
+                });
+            }
+        }
+
+        const historyDB = new HistoryDatabase();
+
+        async function testDB() {
+            const output = document.getElementById('output');
+            try {
+                await historyDB.init();
+                output.innerHTML += '<p>✅ Database initialized successfully</p>';
+                
+                const history = await historyDB.getAllHistory();
+                output.innerHTML += `<p>📚 Found ${history.length} history entries</p>`;
+                
+                if (history.length > 0) {
+                    output.innerHTML += '<h3>History Entries:</h3>';
+                    history.forEach((entry, index) => {
+                        const date = new Date(entry.timestamp).toLocaleString();
+                        output.innerHTML += `<p>${index + 1}. ${entry.milestoneLabel} - ${date} ${entry.isPaid ? '💰' : ''}</p>`;
+                    });
+                }
+            } catch (error) {
+                output.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

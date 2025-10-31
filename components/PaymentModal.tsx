@@ -44,85 +44,97 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-zinc-800 rounded-2xl p-8 max-w-md w-full space-y-6">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-zinc-700 rounded-full flex items-center justify-center mx-auto">
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-              />
-            </svg>
-          </div>
-
-          <h2 className="text-2xl font-bold text-white">Payment Required</h2>
-
-          <p className="text-gray-300">
-            Your logo transformations are ready! Complete your payment to view
-            and download your generated images.
-          </p>
-        </div>
-
-        <div className="bg-zinc-700 rounded-xl p-4 space-y-2">
-          <div className="flex justify-between text-gray-300">
-            <span>Generated images:</span>
-            <span>{generatedImagesCount}</span>
-          </div>
-          <div className="flex justify-between text-gray-300">
-            <span>Price per generation:</span>
-            <span>${(GENERATION_PRICE / 100).toFixed(2)}</span>
-          </div>
-          <div className="border-t border-zinc-600 pt-2 mt-2">
-            <div className="flex justify-between text-white font-semibold">
-              <span>Total:</span>
-              <span>${(totalAmount / 100).toFixed(2)}</span>
-            </div>
-          </div>
-        </div>
-
-        {paymentError && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
-            <p className="text-red-400 text-sm">{paymentError}</p>
-          </div>
-        )}
-
-        <div className="space-y-3">
-          <button
-            onClick={handlePayment}
-            disabled={isProcessing}
-            className="w-full bg-white text-black py-3 px-6 rounded-xl font-semibold hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isProcessing ? (
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Processing...</span>
-              </div>
-            ) : (
-              `Pay $${(totalAmount / 100).toFixed(2)}`
-            )}
-          </button>
-
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+      <div className="bg-white border-8 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] max-w-md w-full transform rotate-1">
+        {/* Header */}
+        <div className="bg-yellow-400 border-b-8 border-black p-6 relative">
           <button
             onClick={onClose}
-            disabled={isProcessing}
-            className="w-full bg-zinc-700 text-gray-300 py-3 px-6 rounded-xl font-medium hover:bg-zinc-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute top-4 right-4 p-2 bg-red-400 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all transform rotate-12 hover:rotate-0"
           >
-            Cancel
+            <span className="text-black font-black text-xl">✕</span>
           </button>
+
+          <div className="text-center space-y-4">
+            <div className="w-20 h-20 bg-white border-6 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center mx-auto transform -rotate-3">
+              <span className="text-4xl">💳</span>
+            </div>
+
+            <h2 className="text-3xl font-black text-black transform -rotate-1">
+              💰 PAYMENT TIME!
+            </h2>
+
+            <p className="text-black font-bold">
+              Your logo transformations are ready! Pay to unlock your amazing
+              creations! 🚀
+            </p>
+          </div>
         </div>
 
-        <div className="text-center">
-          <p className="text-xs text-gray-500">
-            Secure payment powered by Stripe
-          </p>
+        <div className="p-6 space-y-6">
+          {/* Price Breakdown */}
+          <div className="bg-blue-400 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-4 transform rotate-1">
+            <div className="space-y-3">
+              <div className="flex justify-between text-black font-bold">
+                <span>🎨 Generated images:</span>
+                <span>{generatedImagesCount}</span>
+              </div>
+              <div className="flex justify-between text-black font-bold">
+                <span>💵 Price per generation:</span>
+                <span>${(GENERATION_PRICE / 100).toFixed(2)}</span>
+              </div>
+              <div className="border-t-4 border-black pt-3 mt-3">
+                <div className="flex justify-between text-black font-black text-xl">
+                  <span>🔥 TOTAL:</span>
+                  <span>${(totalAmount / 100).toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Error Message */}
+          {paymentError && (
+            <div className="bg-red-400 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-4 transform -rotate-1">
+              <p className="text-black font-black text-center">
+                💥 {paymentError}
+              </p>
+            </div>
+          )}
+
+          {/* Payment Buttons */}
+          <div className="space-y-4">
+            <button
+              onClick={handlePayment}
+              disabled={isProcessing}
+              className="w-full bg-green-400 text-black py-4 px-6 border-6 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all transform rotate-1 hover:rotate-0 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-black text-xl"
+            >
+              {isProcessing ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-6 h-6 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+                  <span>💫 PROCESSING...</span>
+                </div>
+              ) : (
+                `🚀 PAY $${(totalAmount / 100).toFixed(2)} NOW!`
+              )}
+            </button>
+
+            <button
+              onClick={onClose}
+              disabled={isProcessing}
+              className="w-full bg-gray-400 text-black py-3 px-6 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all transform -rotate-1 hover:rotate-0 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+            >
+              ❌ CANCEL
+            </button>
+          </div>
+
+          {/* Stripe Badge */}
+          <div className="text-center">
+            <div className="bg-purple-400 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-block px-4 py-2 transform rotate-2">
+              <p className="text-black font-black text-sm">
+                🔒 SECURE PAYMENT BY STRIPE
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
