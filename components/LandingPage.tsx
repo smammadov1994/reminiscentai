@@ -2,10 +2,19 @@ import React, { useState, useEffect } from "react";
 
 interface LandingPageProps {
   onGetStarted: () => void;
+  onLogin?: () => void;
+  onLogout?: () => void;
+  onPricing?: () => void;
+  user?: any;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
-  const [email, setEmail] = useState("");
+export const LandingPage: React.FC<LandingPageProps> = ({
+  onGetStarted,
+  onLogin,
+  onLogout,
+  onPricing,
+  user,
+}) => {
   const [currentEmotion, setCurrentEmotion] = useState(0);
 
   // Cycle through different emoji states to show the concept
@@ -19,32 +28,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // For now, just proceed to the app
-    onGetStarted();
-  };
-
   return (
     <div className="min-h-screen bg-yellow-300 relative overflow-hidden">
-      {/* Colorful Bubbles */}
+      {/* Colorful Bubbles - Responsive */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-16 h-16 bg-pink-400 rounded-full border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] animate-bounce"></div>
-        <div className="absolute top-40 right-20 w-12 h-12 bg-blue-400 rounded-full border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
+        <div className="absolute top-10 md:top-20 left-4 md:left-10 w-10 md:w-16 h-10 md:h-16 bg-pink-400 rounded-full border-2 md:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] animate-bounce"></div>
+        <div className="absolute top-20 md:top-40 right-8 md:right-20 w-8 md:w-12 h-8 md:h-12 bg-blue-400 rounded-full border-2 md:border-4 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
         <div
-          className="absolute bottom-32 left-20 w-20 h-20 bg-green-400 rounded-full border-4 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] animate-bounce"
+          className="absolute bottom-16 md:bottom-32 left-8 md:left-20 w-12 md:w-20 h-12 md:h-20 bg-green-400 rounded-full border-2 md:border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] md:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] animate-bounce"
           style={{ animationDelay: "1s" }}
         ></div>
         <div
-          className="absolute top-60 left-1/3 w-8 h-8 bg-purple-400 rounded-full border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse"
+          className="absolute top-32 md:top-60 left-1/3 w-6 md:w-8 h-6 md:h-8 bg-purple-400 rounded-full border-2 md:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse"
           style={{ animationDelay: "0.5s" }}
         ></div>
         <div
-          className="absolute bottom-20 right-32 w-14 h-14 bg-red-400 rounded-full border-4 border-black shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] animate-bounce"
+          className="absolute bottom-10 md:bottom-20 right-16 md:right-32 w-10 md:w-14 h-10 md:h-14 bg-red-400 rounded-full border-2 md:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] animate-bounce"
           style={{ animationDelay: "1.5s" }}
         ></div>
         <div
-          className="absolute top-32 right-1/3 w-10 h-10 bg-cyan-400 rounded-full border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] animate-pulse"
+          className="absolute top-16 md:top-32 right-1/3 w-7 md:w-10 h-7 md:h-10 bg-cyan-400 rounded-full border-2 md:border-4 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] animate-pulse"
           style={{ animationDelay: "2s" }}
         ></div>
         <div
@@ -65,30 +68,39 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         </div>
 
         <div className="hidden md:flex items-center space-x-6">
-          <a
-            href="#"
-            className="text-black font-bold hover:underline decoration-4 decoration-pink-400 underline-offset-4 transition-all transform hover:rotate-1"
-          >
-            Platform
-          </a>
-          <a
-            href="#"
-            className="text-black font-bold hover:underline decoration-4 decoration-blue-400 underline-offset-4 transition-all transform hover:-rotate-1"
-          >
-            Solutions
-          </a>
-          <a
-            href="#"
+          <button
+            onClick={onPricing}
             className="text-black font-bold hover:underline decoration-4 decoration-green-400 underline-offset-4 transition-all transform hover:rotate-1"
           >
-            Pricing
-          </a>
-          <button
-            onClick={onGetStarted}
-            className="bg-black text-white px-6 py-3 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] font-black text-lg hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all transform rotate-1 hover:rotate-0"
-          >
-            TRY NOW!
+            💰 Pricing
           </button>
+
+          {user ? (
+            <div className="flex items-center space-x-4">
+              <span className="text-black font-bold">
+                👋 {user.email?.split("@")[0]}
+              </span>
+              <button
+                onClick={onLogout}
+                className="bg-red-400 text-black px-4 py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-black hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all transform -rotate-1 hover:rotate-0"
+              >
+                🚪 LOGOUT
+              </button>
+              <button
+                onClick={onGetStarted}
+                className="bg-black text-white px-6 py-3 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] font-black text-lg hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all transform rotate-1 hover:rotate-0"
+              >
+                DASHBOARD
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={onLogin}
+              className="bg-black text-white px-6 py-3 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] font-black text-lg hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all transform rotate-1 hover:rotate-0"
+            >
+              TRY NOW!
+            </button>
+          )}
         </div>
       </nav>
 
@@ -114,33 +126,43 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             {/* Action buttons */}
             <div className="space-y-6">
               <button
-                onClick={onGetStarted}
+                onClick={user ? onGetStarted : onLogin}
                 className="w-full bg-green-400 text-black px-8 py-4 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] font-black text-xl hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all transform -rotate-1 hover:rotate-0"
               >
                 🚀 START CREATING NOW!
               </button>
 
-              <div className="text-center">
-                <span className="bg-white px-4 py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-black text-black transform rotate-2">
-                  OR
-                </span>
+              {/* Pricing Info */}
+              <div className="bg-yellow-400 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-4 transform rotate-1">
+                <div className="text-center space-y-2">
+                  <p className="text-black font-black text-lg">
+                    💰 Simple Pricing!
+                  </p>
+                  <p className="text-black font-bold">
+                    Only{" "}
+                    <span className="bg-white px-2 py-1 border-2 border-black">
+                      10¢
+                    </span>{" "}
+                    per logo generation
+                  </p>
+                  <button
+                    onClick={onPricing}
+                    className="bg-white text-black px-4 py-2 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-bold text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all transform -rotate-1 hover:rotate-0"
+                  >
+                    📊 View Full Pricing
+                  </button>
+                </div>
               </div>
 
-              <div className="space-y-4">
-                <input
-                  type="email"
-                  placeholder="Enter your email..."
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-6 py-4 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] text-black placeholder-gray-600 font-bold text-lg focus:outline-none focus:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-2px] focus:translate-y-[-2px] transition-all transform rotate-1 focus:rotate-0"
-                />
-                <button
-                  onClick={handleEmailSubmit}
-                  className="w-full bg-blue-400 text-black py-4 px-6 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] font-black text-lg hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all transform rotate-1 hover:rotate-0"
-                >
-                  📧 CONTINUE WITH EMAIL
-                </button>
-              </div>
+              {user && (
+                <div className="text-center">
+                  <div className="bg-blue-400 border-4 border-black p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1 inline-block">
+                    <p className="text-black font-bold text-sm">
+                      👋 Welcome back, {user.email?.split("@")[0]}!
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div className="bg-white p-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
                 <p className="text-sm text-black font-bold">

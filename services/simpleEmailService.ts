@@ -29,13 +29,27 @@ export const sendSimpleEmailToList = async (emailData: SimpleEmailData): Promise
   try {
     // For each recipient, send individual email
     const emailPromises = emailData.recipients.map(async (recipient) => {
+      // Create HTML content without image
+      const htmlMessage = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Check out this amazing logo!</h2>
+          <p>${emailData.message}</p>
+          <p><strong>I created an amazing dynamic logo using Logo Reactivator!</strong></p>
+          <p>The image was too large to include in this email, but you can see similar results by visiting Logo Reactivator and trying it yourself!</p>
+          <p>Logo Reactivator creates logos that change based on user behavior - just like Duolingo's owl!</p>
+          <p>Best regards,<br>${emailData.senderName || 'Logo Reactivator User'}</p>
+          <hr style="margin: 20px 0; border: 1px solid #ccc;">
+          <p style="font-size: 12px; color: #666;">Created with Logo Reactivator - Transform your static logos into emotional experiences!</p>
+        </div>
+      `;
+
       const templateParams = {
         to_email: recipient.email,
         to_name: recipient.name || recipient.email,
         from_name: emailData.senderName || 'Logo Reactivator User',
         subject: emailData.subject,
         message: emailData.message,
-        // Keep it simple - no image data
+        html_content: htmlMessage,
         app_link: 'https://your-logo-reactivator-app.com',
         signature: 'Created with Logo Reactivator - Transform your static logos into emotional experiences!',
       };

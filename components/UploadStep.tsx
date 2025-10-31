@@ -11,13 +11,13 @@ export const UploadStep: React.FC<UploadStepProps> = ({
   isLoading,
 }) => {
   return (
-    <div className="max-w-2xl mx-auto flex flex-col items-center justify-center text-center p-8">
-      <h1 className="text-5xl md:text-6xl font-black tracking-tight mb-6 transform -rotate-2">
-        <span className="bg-white text-black px-6 py-4 border-6 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] inline-block">
+    <div className="max-w-2xl mx-auto flex flex-col items-center justify-center text-center p-4 sm:p-6 md:p-8">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 md:mb-6 transform -rotate-2">
+        <span className="bg-white text-black px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 border-4 md:border-6 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] inline-block">
           🚀 REACTIVATE YOUR IMAGE!
         </span>
       </h1>
-      <p className="mt-4 text-xl font-bold text-black max-w-xl mb-12 bg-yellow-400 p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+      <p className="mt-2 md:mt-4 text-base sm:text-lg md:text-xl font-bold text-black max-w-xl mb-6 md:mb-12 bg-yellow-400 p-3 sm:p-4 md:p-6 border-2 md:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
         Upload your brand logo or any image! 📸 The AI will create emotional
         variations based on user inactivity. It's like giving your logo
         FEELINGS! 🎭

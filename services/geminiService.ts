@@ -490,9 +490,9 @@ const getRandomTextSnippetForMilestone = (milestoneKey: string): string => {
 }
 
 export const generateSadImage = async (base64Image: string, mimeType: string, milestoneKey: string, styleModifier: string): Promise<string> => {
-  const apiKey = process.env.API_KEY;
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error("API_KEY environment variable not set");
+    throw new Error("VITE_GEMINI_API_KEY environment variable not set");
   }
 
   const ai = new GoogleGenAI({ apiKey });

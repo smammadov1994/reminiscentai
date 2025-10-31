@@ -56,10 +56,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       onDragLeave={(e) => handleDragEvents(e, false)}
       onDragOver={(e) => handleDragEvents(e, true)}
       onDrop={handleDrop}
-      className={`flex flex-col items-center justify-center p-12 border-6 border-black cursor-pointer transition-all duration-300 transform ${
+      className={`flex flex-col items-center justify-center p-6 sm:p-8 md:p-12 border-4 md:border-6 border-black cursor-pointer transition-all duration-300 transform ${
         isDragging
-          ? "bg-pink-400 shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] rotate-2 scale-105"
-          : "bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] rotate-1 hover:rotate-0"
+          ? "bg-pink-400 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] rotate-2 scale-105"
+          : "bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] md:hover:translate-x-[-4px] md:hover:translate-y-[-4px] rotate-1 hover:rotate-0"
       } ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
     >
       <input
@@ -70,16 +70,18 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         accept="image/png, image/jpeg, image/webp"
         disabled={isLoading}
       />
-      <div className="text-6xl mb-6 animate-bounce">📸</div>
-      <p className="text-black text-center font-black text-xl">
-        <span className="bg-yellow-400 px-3 py-1 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-block transform -rotate-1">
+      <div className="text-4xl sm:text-5xl md:text-6xl mb-4 md:mb-6 animate-bounce">
+        📸
+      </div>
+      <p className="text-black text-center font-black text-lg sm:text-xl">
+        <span className="bg-yellow-400 px-2 sm:px-3 py-1 border-2 md:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-block transform -rotate-1">
           CLICK TO UPLOAD!
         </span>
       </p>
-      <p className="text-black font-bold mt-4 bg-green-400 px-4 py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1">
+      <p className="text-black font-bold mt-2 md:mt-4 bg-green-400 px-3 sm:px-4 py-1 sm:py-2 border-2 md:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1 text-sm sm:text-base">
         or drag and drop! 🎯
       </p>
-      <p className="text-black font-bold text-sm mt-4 bg-blue-400 px-3 py-1 border-4 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
+      <p className="text-black font-bold text-xs sm:text-sm mt-2 md:mt-4 bg-blue-400 px-2 sm:px-3 py-1 border-2 md:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">
         PNG, JPG, or WEBP ✨
       </p>
     </div>

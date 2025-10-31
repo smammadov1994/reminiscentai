@@ -5,6 +5,8 @@ import { LandingPage } from "./components/LandingPage";
 import { PaymentRequired } from "./components/PaymentRequired";
 import { PaymentModal } from "./components/PaymentModal";
 import { EmailModal } from "./components/EmailModal";
+import { AuthModal } from "./components/AuthModal";
+import { PricingPage } from "./components/PricingPage";
 import { fileToBase64 } from "./utils/fileUtils";
 import {
   generateSadImage,
@@ -16,6 +18,7 @@ import { HistorySidebar } from "./components/HistorySidebar";
 import { ArtifactPanel } from "./components/ArtifactPanel";
 import { SliderStep } from "./components/SliderStep";
 import { historyDB, HistoryEntry } from "./services/historyService";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 export interface OriginalImage {
   base64: string;
@@ -31,7 +34,8 @@ export interface HistoryItem {
   milestoneLabel: string;
 }
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { user, loading, signOut } = useAuth();
   const [showLanding, setShowLanding] = useState<boolean>(true);
   const [originalImage, setOriginalImage] = useState<OriginalImage | null>(
     null
@@ -56,6 +60,8 @@ const App: React.FC = () => {
     "slider"
   );
   const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState<number>(0);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+  const [showPricingModal, setShowPricingModal] = useState<boolean>(false);
 
   const generationController = useRef<AbortController | null>(null);
 
@@ -325,50 +331,98 @@ const App: React.FC = () => {
     }
   };
 
-  const handleHistoryClearAll = async () => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete all history? This cannot be undone."
-      )
-    ) {
-      try {
-        await historyDB.clearAllHistory();
-        setHistoryRefreshTrigger((prev) => prev + 1);
-        console.log("Cleared all history");
-      } catch (error) {
-        console.error("Failed to clear history:", error);
-      }
-    }
-  };
-
   // Initialize email service on component mount
   useEffect(() => {
     initEmailService();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-cyan-300 flex items-center justify-center">
+        <div className="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform rotate-2">
+          <div className="text-2xl font-black text-black">⏳ Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
   if (showLanding) {
-    return <LandingPage onGetStarted={() => setShowLanding(false)} />;
+    return (
+      <>
+        <LandingPage
+          onGetStarted={() => setShowLanding(false)}
+          onLogin={() => setShowAuthModal(true)}
+          onLogout={() => {
+            signOut();
+            setShowLanding(true);
+          }}
+          onPricing={() => setShowPricingModal(true)}
+          user={user}
+        />
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          onAuthSuccess={() => {
+            setShowAuthModal(false);
+            setShowLanding(false);
+          }}
+        />
+        <PricingPage
+          isOpen={showPricingModal}
+          onClose={() => setShowPricingModal(false)}
+        />
+      </>
+    );
   }
 
   return (
     <div className="min-h-screen flex bg-cyan-300 relative overflow-hidden">
-      {/* Background bubbles for dashboard */}
+      {/* Background bubbles for dashboard - responsive */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-10 left-20 w-12 h-12 bg-pink-400 rounded-full border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
-        <div className="absolute top-32 right-40 w-8 h-8 bg-yellow-400 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-45 animate-bounce"></div>
+        <div className="absolute top-4 md:top-10 left-4 lg:left-20 w-8 md:w-12 h-8 md:h-12 bg-pink-400 rounded-full border-2 md:border-4 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] animate-pulse"></div>
+        <div className="absolute top-16 md:top-32 right-8 md:right-40 w-6 md:w-8 h-6 md:h-8 bg-yellow-400 border-2 md:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-45 animate-bounce"></div>
         <div
-          className="absolute bottom-40 left-32 w-16 h-16 bg-green-400 rounded-full border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] animate-pulse"
+          className="absolute bottom-20 md:bottom-40 left-8 lg:left-32 w-10 md:w-16 h-10 md:h-16 bg-green-400 rounded-full border-2 md:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] animate-pulse"
           style={{ animationDelay: "1s" }}
         ></div>
         <div
-          className="absolute top-1/2 right-20 w-6 h-6 bg-purple-400 border-4 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform rotate-12 animate-bounce"
+          className="absolute top-1/2 right-4 md:right-20 w-4 md:w-6 h-4 md:h-6 bg-purple-400 border-2 md:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform rotate-12 animate-bounce"
           style={{ animationDelay: "0.5s" }}
         ></div>
         <div
-          className="absolute bottom-20 right-1/3 w-10 h-10 bg-orange-400 rounded-full border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] animate-pulse"
+          className="absolute bottom-8 md:bottom-20 right-1/4 md:right-1/3 w-6 md:w-10 h-6 md:h-10 bg-orange-400 rounded-full border-2 md:border-4 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] animate-pulse"
           style={{ animationDelay: "1.5s" }}
         ></div>
       </div>
+
+      {/* Mobile History Button */}
+      <button
+        onClick={() => setIsSidebarPinned(!isSidebarPinned)}
+        className="fixed top-4 left-4 z-50 lg:hidden bg-purple-400 border-4 border-black px-3 py-2 font-black text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all transform rotate-3 hover:rotate-0"
+      >
+        📚 HISTORY
+      </button>
+
+      {/* User Menu */}
+      {user && (
+        <div className="fixed top-4 right-4 z-50">
+          <UserMenu
+            user={user}
+            onLogout={() => {
+              signOut();
+              setShowLanding(true);
+            }}
+          />
+        </div>
+      )}
+
+      {/* Mobile History Overlay */}
+      {isSidebarPinned && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsSidebarPinned(false)}
+        />
+      )}
 
       <HistorySidebar
         history={history}
@@ -377,56 +431,10 @@ const App: React.FC = () => {
         onBackToLanding={handleBackToLanding}
         onHistoryItemClick={handleHistoryItemClick}
         onHistoryDelete={handleHistoryDelete}
-        onHistoryClearAll={handleHistoryClearAll}
         refreshTrigger={historyRefreshTrigger}
       />
-      <main className="relative z-10 flex-grow flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 ml-72">
+      <main className="relative z-10 flex-grow flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8 lg:ml-64 xl:ml-72 pt-16 lg:pt-2">
         <div className="w-full h-full flex-grow container mx-auto max-w-7xl relative flex items-center justify-center">
-          {/* Temporary test button */}
-          <button
-            onClick={async () => {
-              try {
-                console.log("Testing IndexedDB...");
-                await historyDB.init();
-                console.log("DB initialized");
-
-                const testEntry = {
-                  originalImage: {
-                    base64: "test-base64",
-                    mimeType: "image/png",
-                    url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-                  },
-                  generatedImages: ["test1", "test2", "test3"] as (
-                    | string
-                    | null
-                    | "error"
-                  )[],
-                  milestoneLabel: "Test Entry",
-                  milestoneIndex: 0,
-                  favoritedIndex: 1,
-                  isPaid: true,
-                };
-
-                const id = await historyDB.saveGeneration(testEntry);
-                console.log("Test entry saved with ID:", id);
-
-                const history = await historyDB.getAllHistory();
-                console.log("All history:", history);
-
-                setHistoryRefreshTrigger((prev) => prev + 1);
-                alert(
-                  `Test successful! Saved entry with ID: ${id}. Check console for details.`
-                );
-              } catch (error) {
-                console.error("Test failed:", error);
-                alert(`Test failed: ${error}`);
-              }
-            }}
-            className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded font-bold"
-          >
-            TEST DB
-          </button>
-
           <UploadStep
             onImageUpload={handleImageUpload}
             isLoading={!!originalImage}
@@ -479,10 +487,66 @@ const App: React.FC = () => {
             onClose={handleEmailModalClose}
             imageUrl={selectedImageForEmail}
             imageName="Generated Logo"
+            userId={user?.id}
+          />
+
+          {/* Auth Modal */}
+          <AuthModal
+            isOpen={showAuthModal}
+            onClose={() => setShowAuthModal(false)}
+            onAuthSuccess={() => setShowAuthModal(false)}
           />
         </div>
       </main>
     </div>
+  );
+};
+
+// User Menu Component
+const UserMenu: React.FC<{ user: any; onLogout: () => void }> = ({
+  user,
+  onLogout,
+}) => {
+  const { signOut } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="bg-yellow-400 border-4 border-black px-3 py-2 font-black text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all transform -rotate-2 hover:rotate-0"
+      >
+        👤 {user.email?.split("@")[0]}
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full right-0 mt-2 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] min-w-48">
+          <div className="p-2">
+            <div className="text-xs text-gray-600 p-2 border-b-2 border-black">
+              {user.email}
+            </div>
+            <button
+              onClick={() => {
+                onLogout();
+                setIsOpen(false);
+              }}
+              className="w-full text-left p-2 font-bold text-black hover:bg-red-400 transition-colors"
+            >
+              🚪 Sign Out
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Main App with Auth Provider
+const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 

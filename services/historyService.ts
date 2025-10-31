@@ -76,7 +76,7 @@ class HistoryDatabase {
     console.log('Saving entry to IndexedDB:', fullEntry);
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.createTransaction([this.storeName], 'readwrite');
+      const transaction = this.db!.transaction([this.storeName], 'readwrite');
       const store = transaction.objectStore(this.storeName);
       const request = store.add(fullEntry);
 
@@ -98,7 +98,7 @@ class HistoryDatabase {
     }
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.createTransaction([this.storeName], 'readonly');
+      const transaction = this.db!.transaction([this.storeName], 'readonly');
       const store = transaction.objectStore(this.storeName);
       const index = store.index('timestamp');
       const request = index.getAll();
@@ -120,7 +120,7 @@ class HistoryDatabase {
     if (!this.db) await this.init();
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.createTransaction([this.storeName], 'readonly');
+      const transaction = this.db!.transaction([this.storeName], 'readonly');
       const store = transaction.objectStore(this.storeName);
       const request = store.get(id);
 
@@ -133,7 +133,7 @@ class HistoryDatabase {
     if (!this.db) await this.init();
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.createTransaction([this.storeName], 'readwrite');
+      const transaction = this.db!.transaction([this.storeName], 'readwrite');
       const store = transaction.objectStore(this.storeName);
       
       // First get the existing entry
@@ -157,7 +157,7 @@ class HistoryDatabase {
     if (!this.db) await this.init();
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.createTransaction([this.storeName], 'readwrite');
+      const transaction = this.db!.transaction([this.storeName], 'readwrite');
       const store = transaction.objectStore(this.storeName);
       const request = store.delete(id);
 
@@ -170,7 +170,7 @@ class HistoryDatabase {
     if (!this.db) await this.init();
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.createTransaction([this.storeName], 'readwrite');
+      const transaction = this.db!.transaction([this.storeName], 'readwrite');
       const store = transaction.objectStore(this.storeName);
       const request = store.clear();
 
