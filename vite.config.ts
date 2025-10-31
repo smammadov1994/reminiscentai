@@ -8,7 +8,7 @@ export default defineConfig({
     host: '0.0.0.0',
   },
   plugins: [react()],
-  base: process.env.NODE_ENV === 'production' ? '/copy-of-logo-reactivator/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/reminiscentai/' : '/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
