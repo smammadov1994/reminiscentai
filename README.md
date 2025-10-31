@@ -1,5 +1,11 @@
 # 🦜 Logo Reactivator
 
+
+<img width="2551" height="1319" alt="Screenshot 2025-10-30 at 4 50 43 PM" src="https://github.com/user-attachments/assets/6545b69a-78ba-4ea4-85bb-421d5e83597b" />
+
+
+
+
 _Bringing the magic of Duolingo's emotional logo to everyone_
 
 ## The Inspiration 💡
