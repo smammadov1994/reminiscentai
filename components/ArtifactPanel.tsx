@@ -30,10 +30,10 @@ export const ArtifactPanel: React.FC<ArtifactPanelProps> = ({
       >
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 p-3 sm:p-4 md:p-5 bg-red-400 border-2 md:border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] md:hover:translate-x-[-2px] md:hover:translate-y-[-2px] transition-all transform rotate-12 hover:rotate-0"
+          className="absolute top-1 right-1 sm:top-2 sm:right-2 md:top-3 md:right-3 p-2 sm:p-2 md:p-3 bg-red-400 border-2 md:border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all transform rotate-12 hover:rotate-0"
           aria-label="Close panel"
         >
-          <CloseIcon className="w-5 h-5 md:w-7 md:h-7 text-black font-bold" />
+          <CloseIcon className="w-3 h-3 md:w-4 md:h-4 text-black font-bold" />
         </button>
 
         {/* Decorative elements - responsive */}
